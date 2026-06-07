@@ -11,6 +11,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+  static const _holdAfterAnim = Duration(milliseconds: 3600);
+
   late AnimationController _ctrl;
   late Animation<double> _scale;
   late Animation<double> _fade;
@@ -42,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _ctrl.forward().then((_) {
-      Future.delayed(const Duration(milliseconds: 600), () {
+      Future.delayed(_holdAfterAnim, () {
         if (mounted) context.go('/home');
       });
     });
