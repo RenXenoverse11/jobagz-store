@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme.dart';
 import '../providers/product_provider.dart';
-import '../repositories/product_repository.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   final int? productId;
@@ -17,6 +16,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
+  final _categoryCtrl = TextEditingController();
+  final _stockCtrl = TextEditingController();
 
   bool _isLoading = false;
   bool get _isEditing => widget.productId != null;
@@ -25,6 +26,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   void dispose() {
     _nameCtrl.dispose();
     _priceCtrl.dispose();
+    _categoryCtrl.dispose();
+    _stockCtrl.dispose();
     super.dispose();
   }
 
@@ -36,6 +39,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     final payload = <String, dynamic>{
       'name': _nameCtrl.text.trim(),
       'price': double.parse(_priceCtrl.text.trim()),
+      if (_categoryCtrl.text.trim().isNotEmpty)
+        'category': _categoryCtrl.text.trim(),
+      if (_stockCtrl.text.trim().isNotEmpty)
+        'stock': int.parse(_stockCtrl.text.trim()),
     };
 
     try {
@@ -50,9 +57,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              _isEditing
-                  ? 'Na-update na!'
-                  : '${_nameCtrl.text.trim()} ay naidagdag na!',
+              _isEditing ? 'Na-update na!' : '${_nameCtrl.text.trim()} ay naidagdag na!',
             ),
             backgroundColor: Colors.green.shade700,
           ),
@@ -107,9 +112,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _isEditing
-                              ? 'I-edit ang produkto'
-                              : 'Bagong produkto',
+                          _isEditing ? 'I-edit ang produkto' : 'Bagong produkto',
                           style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 15,
@@ -163,6 +166,37 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 return null;
               },
             ),
+            const SizedBox(height: 18),
+
+            _buildLabel('Category (optional)'),
+            const SizedBox(height: 6),
+            TextFormField(
+              controller: _categoryCtrl,
+              textCapitalization: TextCapitalization.words,
+              decoration: _inputDecor(
+                hint: 'Canned Goods, Snacks, Beverages...',
+                icon: Icons.category_outlined,
+              ),
+            ),
+            const SizedBox(height: 18),
+
+            _buildLabel('Stock (optional)'),
+            const SizedBox(height: 6),
+            TextFormField(
+              controller: _stockCtrl,
+              keyboardType: TextInputType.number,
+              decoration: _inputDecor(
+                hint: '10',
+                icon: Icons.numbers_outlined,
+              ),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return null;
+                final parsed = int.tryParse(v.trim());
+                if (parsed == null) return 'Numero lang ang ilagay';
+                if (parsed < 0) return 'Hindi pwede negative ang stock';
+                return null;
+              },
+            ),
             const SizedBox(height: 32),
 
             SizedBox(
@@ -187,9 +221,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                         ),
                       )
                     : Text(
-                        _isEditing
-                            ? 'I-save ang Pagbabago'
-                            : 'I-add ang Produkto',
+                        _isEditing ? 'I-save ang Pagbabago' : 'I-add ang Produkto',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -214,13 +246,11 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   InputDecoration _inputDecor({
     required String hint,
-    IconData? icon,
+    required IconData icon,
   }) =>
       InputDecoration(
         hintText: hint,
-        prefixIcon: icon == null
-            ? null
-            : Icon(icon, color: AppTheme.navyBlue, size: 20),
+        prefixIcon: Icon(icon, color: AppTheme.navyBlue, size: 20),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
