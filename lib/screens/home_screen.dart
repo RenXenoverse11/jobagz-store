@@ -50,17 +50,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-            tooltip: 'Mag-add ng produkto',
-            onPressed: () async {
-              await context.push('/product/add');
-              // Refresh after returning from add screen
-              ref.read(productSearchProvider.notifier).search(_searchCtrl.text);
-            },
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(64),
           child: Padding(
@@ -72,19 +61,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Hanapin ang produkto...',
-                hintStyle:
-                    TextStyle(color: Colors.white.withOpacity(0.5)),
-                prefixIcon:
-                    const Icon(Icons.search, color: Colors.white70),
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 suffixIcon: _searchCtrl.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear,
-                            color: Colors.white70),
+                        icon: const Icon(Icons.clear, color: Colors.white70),
                         onPressed: () {
                           _searchCtrl.clear();
-                          ref
-                              .read(productSearchProvider.notifier)
-                              .search('');
+                          ref.read(productSearchProvider.notifier).search('');
                         },
                       )
                     : null,
@@ -132,9 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await context.push('/product/add');
-          ref
-              .read(productSearchProvider.notifier)
-              .search(_searchCtrl.text);
+          ref.read(productSearchProvider.notifier).search(_searchCtrl.text);
         },
         backgroundColor: AppTheme.crimson,
         icon: const Icon(Icons.add),
@@ -236,25 +218,6 @@ class _ProductCard extends StatelessWidget {
                         fontSize: 15,
                       ),
                     ),
-                    if (product.category != null) ...[
-                      const SizedBox(height: 2),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppTheme.navyBlue.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          product.category!,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.navyBlue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -269,14 +232,6 @@ class _ProductCard extends StatelessWidget {
                       color: AppTheme.navyBlue,
                     ),
                   ),
-                  if (product.stock != null)
-                    Text(
-                      'Stock: ${product.stock}',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
                 ],
               ),
               const SizedBox(width: 4),
@@ -300,8 +255,7 @@ class _ProductCard extends StatelessWidget {
                     child: Row(children: [
                       Icon(Icons.delete_outline, size: 18, color: Colors.red),
                       SizedBox(width: 8),
-                      Text('I-delete',
-                          style: TextStyle(color: Colors.red)),
+                      Text('I-delete', style: TextStyle(color: Colors.red)),
                     ]),
                   ),
                 ],
@@ -367,8 +321,7 @@ class _ErrorState extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             const SizedBox(height: 6),
             Text(message,
-                style:
-                    TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
           ],
         ),
       ),
